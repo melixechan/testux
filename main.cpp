@@ -6,14 +6,14 @@ using namespace std;
 
 
 vector multiply(matrix m, vector v) {
-	vector res(m.size, "mult");
+	vector result(m.size, "mult");
 	for (int i = 0; i < m.size; i++) {
-		res.data[i] = 0;
+		result.data[i] = 0;
 		for (int j = 0; j < v.size; j++) {
-			res.data[i] += m.data2d[i][j] * v.data[j];
+			result.data[i] += m.data2d[i][j] * v.data[j];
 		}
 	}
-	return res;
+	return result;
 };
 
 vector operator+(vector v, vector u) {
@@ -45,18 +45,23 @@ vector simple_iter(matrix A, vector b, double eps){
 	vector x_prev(A.size);
 	x_prev.set_data(b.size, b.data);
 	vector x(A.size);
-	
+	vector error(A.size);
+	error = x_prev;
+
 	double tau = 2 / A.norm_frob();
-	double error = x_prev.norm2();
-        while (error > eps){
+
+        while (error.norm2() > eps){
 		x = x_prev - tau * multiply(A, x_prev) + tau*b;		
+		error = x - x_prev;
+		x_prev = x;
 	}
+	cout << "Error = " <<  error.norm2() << endl;
 	return x;
 };
 
 
 int main(){
-	cout << "Hello, world" << endl;
+	cout << "Working fine!" << endl;
 	
 	vector v1(5, "first vector");
 	vector v2(2, "second vector");
@@ -64,24 +69,24 @@ int main(){
 	v2.print();
 
 	vector v3(5);
-	double arr[5] = {11, 12, 13, 14, 15};
-	v3.set_data(5, arr);
+	double arrow[5] = {1, 2, 3, 4, 5};
+	v3.set_data(5, arrow);
 	v3.print();
 	matrix m(2, "first matrix");
-	m.print();
-	double** arr2d = new double*[2];
-	arr2d[0] = new double[2]{111, 112};
-	arr2d[1] = new double[2]{113, 114};
-	m.set_data(2, arr2d);
+	double** arrow2 = new double*[2];
+	arrow2[0] = new double[2]{10, 5};
+	arrow2[1] = new double[2]{7, 14};
+	m.set_data(2, arrow2);
 	m.print();
 	
-	cout << "testing multiplication" << endl;
-	vector v4 = multiply(m, v2);
-	v4.print();
-
-	cout << "testing operator +" << endl;
-	vector v5 = v1 + v3;
-	v5.print();
+	vector b(2);
+	double arrow3[2] = {1, 2};
+	b.set_data(2, arrow3);
+	vector answer(2);
+	answer = simple_iter(m, b, 0.0001);
+	answer.print();
+	cout << endl;
+	
 
 	return 0;
 }
